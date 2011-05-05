@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <five:registerPackage package="." initialize=".initialize" />
+
+  <browser:page
+    for="Products.Poi.interfaces.ITracker"
+    name="poimail"
+    class=".poimail.Receiver"
+    permission="zope2.View"
+    />
+
+</configure>
