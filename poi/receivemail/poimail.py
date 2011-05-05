@@ -64,7 +64,16 @@ class Receiver(BrowserView):
             return msg
         # Pick the first one; strange anyway if there would be more.
         from_name, from_address = from_addresses[0]
-        subject = message.get('Subject')
+
+        subject_line = message.get('Subject')
+        subjects = []
+        decoded = Header.decode_header(subject_line)
+        for decoded_string, charset in decoded:
+            if charset:
+                decoded_string = decoded_string.decode(charset)
+            subjects.append(decoded_string)
+        subject = u' '.join(subjects)
+
         logger.debug("Tracker at %s received mail from %r to %r with "
                      "subject %r", self.context.absolute_url(),
                      from_address, to_addresses, subject)
