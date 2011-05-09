@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2 (unreleased)
+1.2 (2011-05-09)
 ----------------
 
 - Ignore mails with the email_from_address as From address, as this
