@@ -4,7 +4,10 @@ Changelog
 1.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Ignore mails with the email_from_address as From address, as this
+  too easily means that a message sent by Poi ends up being added as a
+  reply on an issue that we have just created.
+  [maurits]
 
 
 1.1 (2011-05-05)

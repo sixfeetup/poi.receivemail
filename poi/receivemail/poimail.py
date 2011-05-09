@@ -64,6 +64,15 @@ class Receiver(BrowserView):
             return msg
         # Pick the first one; strange anyway if there would be more.
         from_name, from_address = from_addresses[0]
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        email_from_address = portal.getProperty('email_from_address')
+        if from_address == email_from_address:
+            # This too easily means that a message sent by Poi ends up
+            # being added as a reply on an issue that we have just
+            # created.
+            msg = u'Ignoring mail from portal email_from_address'
+            logger.info(msg)
+            return msg
 
         subject_line = message.get('Subject')
         subjects = []
