@@ -27,8 +27,12 @@ logger = logging.getLogger('poimail')
 
 # We only listen on these addresses.  Or actually, we only do a few
 # special tricks to switch the user and give him more priviliges when
-# the request comes from one of these addresses.
+# the request comes from one of these addresses.  Make this an empty
+# list or tuple if you do not want those special tricks at all.
 LISTEN_ADDRESSES = ('127.0.0.1', )
+
+# Should we fake a Manager role to be sure that a post succeeds?
+FAKE_MANAGER = True
 
 
 def cleanup_search_string(s):
@@ -196,7 +200,7 @@ class Receiver(BrowserView):
                 return
 
         # See if this user already has the Manager role, otherwise add it.
-        if not user.allowed(self.context, ('Manager', )):
+        if FAKE_MANAGER and not user.allowed(self.context, ('Manager', )):
             logger.debug("Faking Manager role for user %s", user_id)
             user = UnrestrictedUser(user_id, '', ['Manager'], '')
             changed = True

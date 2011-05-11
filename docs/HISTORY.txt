@@ -4,10 +4,13 @@ Changelog
 1.3 (unreleased)
 ----------------
 
+- Added FAKE_MANAGER option (default is True) to determine if we
+  should fake a Manager role to be sure that a post succeeds.
+  [maurits]
+
 - While switching users: if 'email' is not in the properties (say:
   ldap), we can get far too many results; so we do a double check.
   [maurits]
-
 
 
 1.2 (2011-05-09)
