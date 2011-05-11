@@ -165,13 +165,15 @@ class Receiver(BrowserView):
         if remote_address not in LISTEN_ADDRESSES:
             return
 
-        user = None
-        changed = False
-
         # First, see if we can get an existing user based on the From
         # address.
         pas = getToolByName(self.context, 'acl_users')
         users = pas.searchUsers(email=from_address)
+        # If 'email' is not in the properties (say: ldap), we can get
+        # far too many results; so we do a double check.
+        users = [user for user in users if user.get('email') == from_address]
+        user = None
+        changed = False
         if users:
             user_id = users[0]['userid']
             user = pas.getUserById(user_id)

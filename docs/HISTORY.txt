@@ -4,7 +4,10 @@ Changelog
 1.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- While switching users: if 'email' is not in the properties (say:
+  ldap), we can get far too many results; so we do a double check.
+  [maurits]
+
 
 
 1.2 (2011-05-09)
