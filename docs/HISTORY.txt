@@ -4,6 +4,9 @@ Changelog
 1.4 (unreleased)
 ----------------
 
+- Moved all options to a new config.py file.
+  [maurits]
+
 - Add option ADVANCED_SUBJECT_MATCH.  Default is False: we only check
   for '#123' in the Subject line, to avoid matching overly generic
   Subject lines like 'Hi' or 'Problem'.  To get back the previous
