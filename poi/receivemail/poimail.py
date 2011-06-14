@@ -169,8 +169,11 @@ class Receiver(BrowserView):
         pas = getToolByName(self.context, 'acl_users')
         users = pas.searchUsers(email=from_address)
         # If 'email' is not in the properties (say: ldap), we can get
-        # far too many results; so we do a double check.
-        users = [user for user in users if user.get('email') == from_address]
+        # far too many results; so we do a double check.  Also,
+        # apparently ldap can leave '\r\n' at the end of the email
+        # address, so we strip it.
+        users = [user for user in users if user.get('email') and
+                 user.get('email').strip() == from_address]
         user = None
         changed = False
         if users:

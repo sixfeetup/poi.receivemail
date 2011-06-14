@@ -4,6 +4,11 @@ Changelog
 1.4 (unreleased)
 ----------------
 
+- When searching PAS for a user by email address, strip off any white
+  space (like possibly '\r\n' in ldap) from the returned addresses, to
+  avoid non-matching for silly reasons.
+  [maurits]
+
 - Moved all options to a new config.py file.
   [maurits]
 
