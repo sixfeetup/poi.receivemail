@@ -294,6 +294,9 @@ class Receiver(BrowserView):
         for bad in ('Re:', 'Fw:', 'Fwd:', 'Antw:'):
             subject = subject.replace(bad, '').replace(bad.upper(), '')
         subject = subject.strip()
+        if not subject:
+            # C'mon people: learn how to use email!
+            return
         # Now we might have something like this:
         # '[Issue Tracker] #45 - Nieuw issue: Heehee'
         tracker_prefix = '[%s]' % self.context.Title()

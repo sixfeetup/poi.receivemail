@@ -4,7 +4,9 @@ Changelog
 1.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- If the subject is empty, do not try to find a matching issue, as all
+  issues will match.
+  [maurits]
 
 
 1.3 (2011-05-11)
