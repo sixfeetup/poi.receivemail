@@ -4,6 +4,12 @@ Changelog
 1.4 (unreleased)
 ----------------
 
+- Add option ADVANCED_SUBJECT_MATCH.  Default is False: we only check
+  for '#123' in the Subject line, to avoid matching overly generic
+  Subject lines like 'Hi' or 'Problem'.  To get back the previous
+  behavior, set this to True (in a patch in your own code, likely).
+  [maurits]
+
 - If the subject is empty, do not try to find a matching issue, as all
   issues will match.
   [maurits]

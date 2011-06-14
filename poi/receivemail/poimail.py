@@ -33,6 +33,11 @@ LISTEN_ADDRESSES = ('127.0.0.1', )
 
 # Should we fake a Manager role to be sure that a post succeeds?
 FAKE_MANAGER = True
+# Do advanced matching on subject to find existing issue that this
+# email could be a reply to?  When False we just look for '#123' in
+# the Subject line.  When True we search for issues with a Title
+# matching the Subject line as well.
+ADVANCED_SUBJECT_MATCH = False
 
 
 def cleanup_search_string(s):
@@ -276,21 +281,48 @@ class Receiver(BrowserView):
         folder = IResponseContainer(issue)
         folder.add(new_response)
 
+    def find_issue_by_number(self, subject, tags='', message=''):
+        """Find an issue for which this email is a response.
+
+        In this simple version we only search for email subjects that
+        look like they are a response to an email that Poi has sent
+        out.  We are just interested in '#123' somewhere in the
+        subject, as long as the current tracker has an issue with that
+        number.
+        """
+        number = subject[subject.find('#') + 1:]
+        number = number[:number.find(' ')]
+        try:
+            # We only try this; we do not need the integer value.
+            int(number)
+        except ValueError:
+            number = None
+        if number is None:
+            return
+        issue = getattr(self.context, number, None)
+        if issue:
+            logger.debug('Found issue by number: #%s', number)
+            return issue
+
     def find_issue(self, subject, tags, message):
         """Find an issue for which this email is a response.
 
-        We try two ways of finding an issue:
+        The default way of finding an issue is simple: we search
+        '#123' in the email subject and see if we have such an issue
+        number.
 
-        - We search for email subjects that look like they are a
-          response to an email that Poi has sent out from this
-          tracker.
-
-        - We search in the catalog for issues in this tracker matching
-          the given title and tags.
+        You may want to set ADVANCED_SUBJECT_MATCH to True to search
+        for issues matching the given title and tags as well.  Note
+        that a Subject like 'printer does not work' or 'Hi' will
+        likely match too many unrelated issues, so that may defeat the
+        advanced matching.
 
         The message is passed in as argument as well, to make
         alternative schemes possible.
         """
+        if not ADVANCED_SUBJECT_MATCH:
+            # We only want the simple form.
+            return self.find_issue_by_number(subject, tags, message)
         for bad in ('Re:', 'Fw:', 'Fwd:', 'Antw:'):
             subject = subject.replace(bad, '').replace(bad.upper(), '')
         subject = subject.strip()
@@ -303,18 +335,10 @@ class Receiver(BrowserView):
         if subject.find(tracker_prefix) != -1:
             # Looks like an answer to an issue report from this
             # tracker.  See if we have such an issue number.
-            number = subject[subject.find('#') + 1:]
-            number = number[:number.find(' ')]
-            try:
-                # We only try this; we do not need the integer value.
-                int(number)
-            except ValueError:
-                number = None
-            if number is not None:
-                issue = getattr(self.context, number, None)
-                if issue:
-                    logger.debug('Found issue by number: #%s', number)
-                    return issue
+            issue = self.find_issue_by_number(subject, tags, message)
+            if issue:
+                return issue
+
         search_path = '/'.join(self.context.getPhysicalPath())
         catalog = getToolByName(self.context, 'portal_catalog')
         # Search for issue in this tracker with the same Title and
