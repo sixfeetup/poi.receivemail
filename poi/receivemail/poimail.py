@@ -63,6 +63,7 @@ class Receiver(BrowserView):
             return msg
         # Pick the first one; strange anyway if there would be more.
         from_name, from_address = from_addresses[0]
+        from_address = from_address.lower()
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         email_from_address = portal.getProperty('email_from_address')
         if from_address == email_from_address:
@@ -248,6 +249,7 @@ class Receiver(BrowserView):
                 continue
             if '@' not in decoded_string:
                 continue
+        
             return email_utils.getaddresses((decoded_string, ))
         return []
 
