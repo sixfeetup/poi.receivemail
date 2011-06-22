@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5 (unreleased)
+1.5 (2011-06-22)
 ----------------
 
 - Make e-mail from address lower-case to prevent search problems with ldap
