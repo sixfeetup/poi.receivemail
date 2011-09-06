@@ -63,10 +63,9 @@ class Receiver(BrowserView):
             return msg
         # Pick the first one; strange anyway if there would be more.
         from_name, from_address = from_addresses[0]
-        from_address = from_address.lower()
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         email_from_address = portal.getProperty('email_from_address')
-        if from_address == email_from_address:
+        if from_address.lower() == email_from_address.lower():
             # This too easily means that a message sent by Poi ends up
             # being added as a reply on an issue that we have just
             # created.
@@ -169,12 +168,16 @@ class Receiver(BrowserView):
         # address.
         pas = getToolByName(self.context, 'acl_users')
         users = pas.searchUsers(email=from_address)
+        # Also try lowercase
+        from_address = from_address.lower()
+        if not users:
+            users = pas.searchUsers(email=from_address)
         # If 'email' is not in the properties (say: ldap), we can get
         # far too many results; so we do a double check.  Also,
         # apparently ldap can leave '\r\n' at the end of the email
-        # address, so we strip it.
+        # address, so we strip it.  And we compare lowercase.
         users = [user for user in users if user.get('email') and
-                 user.get('email').strip() == from_address]
+                 user.get('email').strip().lower() == from_address]
         user = None
         changed = False
         if users:
@@ -249,7 +252,7 @@ class Receiver(BrowserView):
                 continue
             if '@' not in decoded_string:
                 continue
-        
+
             return email_utils.getaddresses((decoded_string, ))
         return []
 
