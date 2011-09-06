@@ -427,6 +427,10 @@ class Receiver(BrowserView):
         if not issue.isValid():
             logger.warn('Issue is not valid. Post will fail.')
 
+        # Creation has finished, so we remove the archetypes flag for
+        # that, otherwise the issue gets renamed when someone edits
+        # it.
+        issue.unmarkCreationFlag()
         notify(ObjectInitializedEvent(issue))
         workflow_tool = getToolByName(tracker, 'portal_workflow')
         # The 'post' transition is only available when the issue is valid.

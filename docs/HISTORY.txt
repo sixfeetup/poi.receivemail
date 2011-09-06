@@ -4,6 +4,10 @@ Changelog
 1.6 (unreleased)
 ----------------
 
+- Prevent issues from being automatically renamed after they are
+  edited.
+  [maurits]
+
 - Prevent some more lower-case email address comparison problems.
   [maurits]
 
