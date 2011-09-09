@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import os
 
 version = '1.7dev'
 
@@ -7,7 +6,7 @@ setup(name='poi.receivemail',
       version=version,
       description="Receive email in the Poi issue tracker",
       long_description=open("README.txt").read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
+                       open("CHANGES.txt").read(),
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
       classifiers=[
