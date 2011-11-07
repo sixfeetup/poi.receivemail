@@ -179,12 +179,12 @@ class Receiver(BrowserView):
         users = [user for user in users if user.get('email') and
                  user.get('email').strip().lower() == from_address]
         user = None
-        changed = False
+        switched = False
         if users:
             user_id = users[0]['userid']
             user = pas.getUserById(user_id)
             if user:
-                changed = True
+                switched = True
         if not user:
             user = sm.getUser()
             # Getting the user id can be tricky.
@@ -205,12 +205,17 @@ class Receiver(BrowserView):
         if FAKE_MANAGER and not user.allowed(self.context, ('Manager', )):
             logger.debug("Faking Manager role for user %s", user_id)
             user = UnrestrictedUser(user_id, '', ['Manager'], '')
-            changed = True
+            faked = True
+        else:
+            faked = False
         # Now see if we changed something.
-        if not changed:
+        if not (faked or switched):
             return
         newSecurityManager(self.request, user)
-        logger.debug("Switched to user %s", user_id)
+        if switched:
+            logger.debug("Switched to user %s", user_id)
+        if faked:
+            logger.debug("Faking Manager role for user %s", user_id)
 
     def get_addresses(self, message, header_name):
         """Get addresses from the header_name.
