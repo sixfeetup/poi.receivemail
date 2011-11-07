@@ -413,6 +413,10 @@ class Receiver(BrowserView):
                             **kwargs)
         issue = getattr(tracker, newId)
         issue._renameAfterCreation()
+        # Some fields have no effect when set with the above
+        # _createObjectByType call.
+        if 'subject' in kwargs:
+            issue.setSubject(kwargs['subject'])
 
         # Some fields are required.  We pick the first available
         # option.

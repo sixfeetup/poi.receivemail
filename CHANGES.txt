@@ -4,6 +4,9 @@ Changelog
 1.7 (unreleased)
 ----------------
 
+- When a subject (keyword, category) is given, set that explicitly.
+  [maurits]
+
 - In ``get_addresses`` allow getting addresses from headers other than
   To and From as well.
   [maurits]
