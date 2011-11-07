@@ -4,7 +4,9 @@ Changelog
 1.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- In ``get_addresses`` allow getting addresses from headers other than
+  To and From as well.
+  [maurits]
 
 
 1.6 (2011-09-06)

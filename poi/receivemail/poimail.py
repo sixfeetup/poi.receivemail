@@ -213,7 +213,10 @@ class Receiver(BrowserView):
         logger.debug("Switched to user %s", user_id)
 
     def get_addresses(self, message, header_name):
-        """Get the From or To addresses, specified by header_name.
+        """Get addresses from the header_name.
+
+        This is usually 'From' or 'To', but other headers may contain
+        addresses too, so we allow all, unlike we used to do.
 
         We expect just one From address and one To address, but
         multiple addresses can also be checked.
@@ -236,7 +239,7 @@ class Receiver(BrowserView):
           An email.Errors.HeaderParseError may be raised when certain
           decoding error occurs (e.g. a base64 decoding exception).
         """
-        if header_name not in ('From', 'To'):
+        if not header_name:
             raise ValueError
 
         address = message.get(header_name)
