@@ -4,7 +4,9 @@ Changelog
 1.8 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Set more fields explicitly, as the createObjectByType call only sets
+  some of them.
+  [maurits]
 
 
 1.7 (2011-11-09)

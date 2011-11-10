@@ -418,10 +418,13 @@ class Receiver(BrowserView):
                             **kwargs)
         issue = getattr(tracker, newId)
         issue._renameAfterCreation()
+
         # Some fields have no effect when set with the above
         # _createObjectByType call.
-        if 'subject' in kwargs:
-            issue.setSubject(kwargs['subject'])
+        for fieldname, value in kwargs.items():
+            field = issue.getField(fieldname)
+            if field:
+                field.set(issue, value)
 
         # Some fields are required.  We pick the first available
         # option.
@@ -430,9 +433,6 @@ class Receiver(BrowserView):
 
         # This is done by default already when you do not specify anything:
         #issue.setSeverity(tracker.getDefaultSeverity())
-        # This should be set based on the email address that it comes in for:
-        #issue.setResponsibleManager('(UNASSIGNED)')
-
         # This could be interesting:
         #issue.setSteps(steps, mimetype='text/x-web-intelligent')
 
