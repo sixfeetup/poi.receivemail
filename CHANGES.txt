@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.8 (unreleased)
+1.8 (2011-11-10)
 ----------------
 
 - Set more fields explicitly, as the createObjectByType call only sets
