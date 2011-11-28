@@ -402,6 +402,15 @@ class Receiver(BrowserView):
         payload = message.get_payload()
         if not message.is_multipart():
             mimetype = message.get_content_type()
+            charset = message.get_content_charset()
+            logger.info("Charset: %r", charset)
+            if charset and charset != 'utf-8':
+                # We only want to store unicode or ascii or utf-8 in
+                # Plone.
+                # Decode to unicode:
+                payload = payload.decode(charset, 'replace')
+                # Encode to utf-8:
+                payload = payload.encode('utf-8', 'replace')
             return payload, mimetype
         for part in payload:
             if part.is_multipart():

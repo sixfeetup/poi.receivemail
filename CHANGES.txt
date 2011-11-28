@@ -4,6 +4,10 @@ Changelog
 1.9 (unreleased)
 ----------------
 
+- Use the body charset to decode the body text and then encode it as
+  utf-8 before storing it.
+  [maurits]
+
 - Avoid a unicode error when there is no body.
   [maurits]
 
