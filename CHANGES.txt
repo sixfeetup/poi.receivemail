@@ -4,6 +4,10 @@ Changelog
 1.9 (unreleased)
 ----------------
 
+- Fixed handling multipart messages that have parts that themselves
+  are multipart.
+  [maurits]
+
 - When there is an empty or missing Subject line, use '[no subject]'
   as title.  We do not try to match such a mail to a previous issue
   but always create a new one.

@@ -385,7 +385,10 @@ class Receiver(BrowserView):
             mimetype = message.get_content_type()
             return payload, mimetype
         for part in payload:
-            text, mimetype = self.part_to_text_and_mimetype(part)
+            if part.is_multipart():
+                text, mimetype = self.get_details_and_mimetype(part)
+            else:
+                text, mimetype = self.part_to_text_and_mimetype(part)
             text = text.strip()
             # Might be empty?
             if text:
