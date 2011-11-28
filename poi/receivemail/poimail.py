@@ -1,3 +1,4 @@
+import base64
 import logging
 from email.Errors import HeaderParseError
 from email import message_from_string
@@ -26,6 +27,7 @@ from Products.Poi.adapters import Response
 from poi.receivemail.config import LISTEN_ADDRESSES
 from poi.receivemail.config import FAKE_MANAGER
 from poi.receivemail.config import ADVANCED_SUBJECT_MATCH
+from poi.receivemail.config import ADD_ATTACHMENTS
 
 logger = logging.getLogger('poimail')
 
@@ -136,6 +138,23 @@ class Receiver(BrowserView):
                 return u'Unauthorized'
             logger.info('Added mail as response to issue %s',
                         issue.absolute_url())
+
+        if ADD_ATTACHMENTS:
+            attachments = self.get_attachments(message)
+            for name, att in attachments:
+                logger.info("Adding attachment as response: %r, length %d",
+                            name, len(att))
+                attachment = File(name, name, att)
+                try:
+                    self.add_response(issue, text='', mimetype='text/plain',
+                                      attachment=attachment)
+                except Unauthorized, exc:
+                    # We mark this as unauthorized, but the main issue
+                    # or response is already created, which is
+                    # actually fine.
+                    logger.error(u'Unauthorized to add response: %s', exc)
+                    return u'Unauthorized'
+
         # Restore original security manager
         setSecurityManager(sm)
         return mail
@@ -416,6 +435,33 @@ class Receiver(BrowserView):
             logger.warn("Converting part to mimetype %s failed.", mimetype)
             return u'', 'text/plain'
         return safe.getData(), mimetype
+
+    def get_attachments(self, message):
+        """Get attachments.
+        """
+        payload = message.get_payload()
+        if not message.is_multipart():
+            mimetype = message.get_content_type()
+            if mimetype.startswith('text'):
+                return []
+            filename = message.get_filename()
+            if not filename:
+                return []
+            encoding = message.get('Content-Transfer-Encoding', '')
+            if encoding == 'base64':
+                data = base64.decodestring(payload)
+            elif encoding == 'binary':
+                # Untested.
+                data = payload
+            else:
+                # TODO: support other encodings?  Not sure if this
+                # makes sense for anything else.
+                return []
+            return [(filename, data)]
+        attachments = []
+        for part in payload:
+            attachments.extend(self.get_attachments(part))
+        return attachments
 
     def create_issue(self, **kwargs):
         """Create an issue in the given tracker, and perform workflow and

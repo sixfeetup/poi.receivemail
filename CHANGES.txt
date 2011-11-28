@@ -4,6 +4,14 @@ Changelog
 1.9 (unreleased)
 ----------------
 
+- Optionally add attachments from the e-mail.  We look for binary
+  attachments.  These are added as separate responses, as you can only
+  add one attachment per issue or response.  In config.py we have
+  added a setting ADD_ATTACHMENTS for this (default True) to make it a
+  bit easier to switch this off in case of problems or when you do not
+  want it.
+  [maurits]
+
 - Fixed handling multipart messages that have parts that themselves
   are multipart.
   [maurits]

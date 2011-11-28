@@ -13,3 +13,7 @@ FAKE_MANAGER = True
 # matching the Subject line as well.
 ADVANCED_SUBJECT_MATCH = False
 
+# Add attachments from the e-mail?  We look for binary attachments.
+# These are added as separate responses, as you can only add one
+# attachment per issue or response.
+ADD_ATTACHMENTS = True
