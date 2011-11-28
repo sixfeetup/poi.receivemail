@@ -4,7 +4,10 @@ Changelog
 1.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- When there is an empty or missing Subject line, use '[no subject]'
+  as title.  We do not try to match such a mail to a previous issue
+  but always create a new one.
+  [maurits]
 
 
 1.8 (2011-11-10)

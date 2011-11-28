@@ -73,7 +73,7 @@ class Receiver(BrowserView):
             logger.info(msg)
             return msg
 
-        subject_line = message.get('Subject')
+        subject_line = message.get('Subject', '')
         subjects = []
         decoded = Header.decode_header(subject_line)
         for decoded_string, charset in decoded:
@@ -112,6 +112,12 @@ class Receiver(BrowserView):
         if issue is None:
             manager = self.get_manager(message, tags)
             logger.debug("Determined manager: %s", manager)
+            if not subject:
+                # When there is no subject, we always want to create a
+                # new issue, as we do not want to try to match a empty
+                # or fake subject.
+                # We also want to flay the user alive...
+                subject = '[no subject]'
             try:
                 issue = self.create_issue(
                     title=subject, details=details, contactEmail=from_address,
@@ -247,7 +253,7 @@ class Receiver(BrowserView):
         if not header_name:
             raise ValueError
 
-        address = message.get(header_name)
+        address = message.get(header_name, '')
         try:
             decoded = Header.decode_header(address)
         except HeaderParseError:
