@@ -4,6 +4,9 @@ Changelog
 1.9 (unreleased)
 ----------------
 
+- Avoid a unicode error when there is no body.
+  [maurits]
+
 - Optionally add attachments from the e-mail.  We look for binary
   attachments.  These are added as separate responses, as you can only
   add one attachment per issue or response.  In config.py we have

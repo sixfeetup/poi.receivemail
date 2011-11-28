@@ -89,7 +89,7 @@ class Receiver(BrowserView):
                      from_address, to_addresses, subject)
         details, mimetype = self.get_details_and_mimetype(message)
         if not details:
-            details = u"Warning: no details found in email"
+            details = "Warning: no details found in email"
             mimetype = 'text/plain'
             logger.warn(details)
         logger.debug('Got payload with mimetype %s from email.', mimetype)
