@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.10 (unreleased)
+1.10 (2011-12-14)
 -----------------
 
 - Fixed wrong match for issue by subject.  While searching for #123 in
