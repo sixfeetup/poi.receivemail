@@ -4,7 +4,10 @@ Changelog
 1.10 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fixed wrong match for issue by subject.  While searching for #123 in
+  the subject line we would match 123 at the beginning of the line as
+  well, which may give wrong matches.
+  [maurits]
 
 
 1.9 (2011-11-28)

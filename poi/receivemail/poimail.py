@@ -321,7 +321,10 @@ class Receiver(BrowserView):
         subject, as long as the current tracker has an issue with that
         number.
         """
-        number = subject[subject.find('#') + 1:]
+        idx = subject.find('#')
+        if idx == -1:
+            return
+        number = subject[idx + 1:]
         number = number[:number.find(' ')]
         try:
             # We only try this; we do not need the integer value.
