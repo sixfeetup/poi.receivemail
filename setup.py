@@ -6,7 +6,7 @@ setup(name='poi.receivemail',
       version=version,
       description="Receive email in the Poi issue tracker",
       long_description=open("README.txt").read() + "\n" +
-                       open("CHANGES.txt").read(),
+                       open("CHANGES.rst").read(),
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
       classifiers=[
