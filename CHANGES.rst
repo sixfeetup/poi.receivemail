@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.11 (unreleased)
+1.11 (2012-10-14)
 -----------------
 
 - Moved to https://github.com/collective/poi.receivemail
