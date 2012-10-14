@@ -4,7 +4,8 @@ Changelog
 1.11 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Moved to https://github.com/collective/poi.receivemail
+  [maurits]
 
 
 1.10 (2011-12-14)

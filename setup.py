@@ -5,7 +5,7 @@ version = '1.11dev'
 setup(name='poi.receivemail',
       version=version,
       description="Receive email in the Poi issue tracker",
-      long_description=(open("README.txt").read().strip() + "\\nn" +
+      long_description=(open("README.txt").read().strip() + "\n\n" +
                         open("CHANGES.rst").read().strip()),
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
@@ -20,7 +20,7 @@ setup(name='poi.receivemail',
       keywords='',
       author='Maurits van Rees',
       author_email='maurits@vanrees.org',
-      url='http://svn.plone.org/svn/collective/poi.receivemail',
+      url='https://github.com/collective/poi.receivemail',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['poi'],
