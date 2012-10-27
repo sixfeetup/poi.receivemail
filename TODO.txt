@@ -1,0 +1,7 @@
+Ideas
+-----
+
+- Support a specific 'From' address per tracker.
+
+- Maybe base64decode is necessary or useful.  No complaints yet
+  though.
