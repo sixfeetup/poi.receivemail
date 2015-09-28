@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.12.dev0'
+version = '1.12.1'
 
 setup(name='poi.receivemail',
       version=version,
