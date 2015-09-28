@@ -19,6 +19,7 @@ from AccessControl.User import UnrestrictedUser
 from OFS.Image import File
 from Products.Archetypes.event import ObjectInitializedEvent
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.Five import BrowserView
 from Products.CMFPlone.utils import _createObjectByType
 from Products.Poi.adapters import IResponseContainer
@@ -28,6 +29,12 @@ from poi.receivemail.config import LISTEN_ADDRESSES
 from poi.receivemail.config import FAKE_MANAGER
 from poi.receivemail.config import ADVANCED_SUBJECT_MATCH
 from poi.receivemail.config import ADD_ATTACHMENTS
+
+try:
+    from poi.maildefaults.settings import ISettings
+    MAILDEFAULTS = True
+except ImportError:
+    MAILDEFAULTS = False
 
 logger = logging.getLogger('poimail')
 
@@ -485,7 +492,15 @@ class Receiver(BrowserView):
                             **kwargs)
         issue = getattr(tracker, newId)
         issue._renameAfterCreation()
-
+        # if we are using the maildefaults add-on
+        if MAILDEFAULTS:
+            issue_defaults = ISettings(tracker)
+            # filter out the values that are None so we don't override real
+            # fields
+            issue_defaults = dict([(k, v) for k, v in issue_defaults.items()
+                                   if v])
+            # add our default values into the arguments
+            kwargs.update(issue_defaults)
         # Some fields have no effect when set with the above
         # _createObjectByType call.
         for fieldname, value in kwargs.items():
@@ -495,8 +510,10 @@ class Receiver(BrowserView):
 
         # Some fields are required.  We pick the first available
         # option.
-        issue.setIssueType(tracker.getAvailableIssueTypes()[0]['id'])
-        issue.setArea(tracker.getAvailableAreas()[0]['id'])
+        if 'issueType' not in kwargs:
+            issue.setIssueType(tracker.getAvailableIssueTypes()[0]['id'])
+        if 'area' not in kwargs:
+            issue.setArea(tracker.getAvailableAreas()[0]['id'])
 
         # This is done by default already when you do not specify anything:
         #issue.setSeverity(tracker.getDefaultSeverity())
@@ -513,6 +530,10 @@ class Receiver(BrowserView):
         notify(ObjectInitializedEvent(issue))
         workflow_tool = getToolByName(tracker, 'portal_workflow')
         # The 'post' transition is only available when the issue is valid.
-        workflow_tool.doActionFor(issue, 'post')
+        try:
+            workflow_tool.doActionFor(issue, 'post')
+        except WorkflowException:
+            logger.warn('Issue could not sent through the post transition')
+            raise
         issue.reindexObject()
         return issue
