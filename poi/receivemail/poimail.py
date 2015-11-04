@@ -516,9 +516,9 @@ class Receiver(BrowserView):
             issue.setArea(tracker.getAvailableAreas()[0]['id'])
 
         # This is done by default already when you do not specify anything:
-        #issue.setSeverity(tracker.getDefaultSeverity())
+        # issue.setSeverity(tracker.getDefaultSeverity())
         # This could be interesting:
-        #issue.setSteps(steps, mimetype='text/x-web-intelligent')
+        # issue.setSteps(steps, mimetype='text/x-web-intelligent')
 
         if not issue.isValid():
             logger.warn('Issue is not valid. Post will fail.')
@@ -527,13 +527,6 @@ class Receiver(BrowserView):
         # that, otherwise the issue gets renamed when someone edits
         # it.
         issue.unmarkCreationFlag()
+        # This will notify and call the automatic transitions
         notify(ObjectInitializedEvent(issue))
-        workflow_tool = getToolByName(tracker, 'portal_workflow')
-        # The 'post' transition is only available when the issue is valid.
-        try:
-            workflow_tool.doActionFor(issue, 'post')
-        except WorkflowException:
-            logger.warn('Issue could not sent through the post transition')
-            raise
-        issue.reindexObject()
         return issue
