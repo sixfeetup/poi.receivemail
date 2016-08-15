@@ -73,7 +73,7 @@ class Receiver(BrowserView):
         # Pick the first one; strange anyway if there would be more.
         from_name, from_address = from_addresses[0]
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
-        email_from_address = portal.getProperty('email_from_address')
+        email_from_address = portal.getProperty('email_from_address', '')
         if from_address.lower() == email_from_address.lower():
             # This too easily means that a message sent by Poi ends up
             # being added as a reply on an issue that we have just
