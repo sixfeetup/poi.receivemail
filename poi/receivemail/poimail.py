@@ -19,7 +19,6 @@ from AccessControl.User import UnrestrictedUser
 from OFS.Image import File
 from Products.Archetypes.event import ObjectInitializedEvent
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.Five import BrowserView
 from Products.CMFPlone.utils import _createObjectByType
 from Products.Poi.adapters import IResponseContainer
