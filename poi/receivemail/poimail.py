@@ -10,17 +10,15 @@ except ImportError:
     from email import Utils as email_utils
 from email import Header
 
-from zope.event import notify
 from AccessControl import Unauthorized
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.User import UnrestrictedUser
-from OFS.Image import File
-from Products.Archetypes.event import ObjectInitializedEvent
+from plone import api
+from plone.namedfile import NamedBlobFile
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
-from Products.CMFPlone.utils import _createObjectByType
 from Products.Poi.adapters import IResponseContainer
 from Products.Poi.adapters import Response
 
@@ -103,7 +101,7 @@ class Receiver(BrowserView):
         # Create an attachment from the complete email.  Somehow the
         # result is nicer when it is put in a response than in an
         # issue.  Not much we can do about that probably.
-        attachment = File('email.eml', 'E-mail', mail)
+        attachment = NamedBlobFile(mail, mimetype, u'email.eml')
 
         tags = self.get_tags(message)
         if tags:
@@ -128,8 +126,8 @@ class Receiver(BrowserView):
                 subject = '[no subject]'
             try:
                 issue = self.create_issue(
-                    title=subject, details=details, contactEmail=from_address,
-                    attachment=attachment, responsibleManager=manager,
+                    title=subject, details=details, contact_email=from_address,
+                    attachment=attachment, assignee=manager,
                     subject=tags)
             except Unauthorized, exc:
                 logger.error(u'Unauthorized to create issue: %s', exc)
@@ -150,7 +148,7 @@ class Receiver(BrowserView):
             for name, att in attachments:
                 logger.info("Adding attachment as response: %r, length %d",
                             name, len(att))
-                attachment = File(name, name, att)
+                attachment = NamedBlobFile(att, 'text/plain', name)
                 try:
                     self.add_response(issue, text='', mimetype='text/plain',
                                       attachment=attachment)
@@ -301,7 +299,7 @@ class Receiver(BrowserView):
         A custom implementation could pick a manager based on the tags
         that have already been determined.
         """
-        default = '(UNASSIGNED)'
+        default = None
         return default
 
     def get_tags(self, message):
@@ -462,7 +460,7 @@ class Receiver(BrowserView):
             mimetype = message.get_content_type()
             if mimetype.startswith('text'):
                 return []
-            filename = message.get_filename()
+            filename = unicode(message.get_filename())
             if not filename:
                 return []
             encoding = message.get('Content-Transfer-Encoding', '')
@@ -486,11 +484,6 @@ class Receiver(BrowserView):
         rename-after-creation initialisation.
         """
         tracker = self.context
-        newId = tracker.generateUniqueId('PoiIssue')
-        _createObjectByType('PoiIssue', tracker, newId,
-                            **kwargs)
-        issue = getattr(tracker, newId)
-        issue._renameAfterCreation()
         # if we are using the maildefaults add-on
         if MAILDEFAULTS:
             issue_defaults = ISettings(tracker)
@@ -500,32 +493,21 @@ class Receiver(BrowserView):
                                    if v])
             # add our default values into the arguments
             kwargs.update(issue_defaults)
-        # Some fields have no effect when set with the above
-        # _createObjectByType call.
-        for fieldname, value in kwargs.items():
-            field = issue.getField(fieldname)
-            if field:
-                field.set(issue, value)
-
         # Some fields are required.  We pick the first available
         # option.
-        if 'issueType' not in kwargs:
-            issue.setIssueType(tracker.getAvailableIssueTypes()[0]['id'])
+        if 'issue_type' not in kwargs:
+            kwargs['issue_type'] = tracker.getAvailableIssueTypes()[0]['id']
         if 'area' not in kwargs:
-            issue.setArea(tracker.getAvailableAreas()[0]['id'])
+            kwargs['area'] = tracker.getAvailableAreas()[0]['id']
 
-        # This is done by default already when you do not specify anything:
-        # issue.setSeverity(tracker.getDefaultSeverity())
-        # This could be interesting:
-        # issue.setSteps(steps, mimetype='text/x-web-intelligent')
+        issue = api.content.create(
+            id='poimail',  # should be renamed on create
+            container=tracker,
+            type='Issue',
+            **kwargs
+        )
 
         if not issue.isValid():
             logger.warn('Issue is not valid. Post will fail.')
 
-        # Creation has finished, so we remove the archetypes flag for
-        # that, otherwise the issue gets renamed when someone edits
-        # it.
-        issue.unmarkCreationFlag()
-        # This will notify and call the automatic transitions
-        notify(ObjectInitializedEvent(issue))
         return issue
