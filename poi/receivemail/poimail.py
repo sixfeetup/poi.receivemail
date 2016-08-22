@@ -21,6 +21,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.Poi.adapters import IResponseContainer
 from Products.Poi.adapters import Response
+from Products.Poi.content.issue import next_issue_id
 
 from poi.receivemail.config import LISTEN_ADDRESSES
 from poi.receivemail.config import FAKE_MANAGER
@@ -500,8 +501,9 @@ class Receiver(BrowserView):
         if 'area' not in kwargs:
             kwargs['area'] = tracker.getAvailableAreas()[0]['id']
 
+        issue_id = next_issue_id(tracker)
         issue = api.content.create(
-            id='poimail',  # should be renamed on create
+            id=issue_id,
             container=tracker,
             type='Issue',
             **kwargs
