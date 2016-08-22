@@ -16,6 +16,7 @@ from AccessControl.SecurityManagement import setSecurityManager
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.User import UnrestrictedUser
 from plone import api
+from plone.app.textfield import RichTextValue
 from plone.namedfile import NamedBlobFile
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
@@ -126,6 +127,7 @@ class Receiver(BrowserView):
                 # We also want to flay the user alive...
                 subject = '[no subject]'
             try:
+                details = RichTextValue(details, 'text/plain', 'text/html')
                 issue = self.create_issue(
                     title=subject, details=details, contact_email=from_address,
                     attachment=attachment, assignee=manager,
