@@ -499,9 +499,9 @@ class Receiver(BrowserView):
         # Some fields are required.  We pick the first available
         # option.
         if 'issue_type' not in kwargs:
-            kwargs['issue_type'] = tracker.getAvailableIssueTypes()[0]['id']
+            kwargs['issue_type'] = tracker.available_issue_types[0]['short_name']
         if 'area' not in kwargs:
-            kwargs['area'] = tracker.getAvailableAreas()[0]['id']
+            kwargs['area'] = tracker.available_areas[0]['short_name']
 
         issue_id = next_issue_id(tracker)
         issue = api.content.create(
