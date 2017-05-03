@@ -10,6 +10,8 @@ except ImportError:
     from email import Utils as email_utils
 from email import Header
 
+from zope.interface import alsoProvides
+
 from AccessControl import Unauthorized
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
@@ -18,6 +20,7 @@ from AccessControl.User import UnrestrictedUser
 from plone import api
 from plone.app.textfield import RichTextValue
 from plone.namedfile import NamedBlobFile
+from plone.protect.interfaces import IDisableCSRFProtection
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.Poi.adapters import IResponseContainer
@@ -51,6 +54,7 @@ def cleanup_search_string(s):
 class Receiver(BrowserView):
 
     def __call__(self):
+        alsoProvides(self.request, IDisableCSRFProtection)
         mail = self.request.get('Mail')
         mail = mail.strip()
         if not mail:
