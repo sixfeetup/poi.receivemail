@@ -446,10 +446,14 @@ class Receiver(BrowserView):
             # only need that safe mimetype for the conversion.
             mimetype = 'text/html'
         else:
-            # This might not work in all cases, e.g. for attachments,
-            # but that is not tested yet.
-            mimetype = 'text/plain'
-            safe = tt.convertTo(mimetype, part.get_payload())
+            filename = unicode(part.get_filename())
+            if filename:
+                return u'', 'text/plain'
+            else:
+                # This might not work in all cases, e.g. for attachments,
+                # but that is not tested yet.
+                mimetype = 'text/plain'
+                safe = tt.convertTo(mimetype, part.get_payload())
         if safe is None:
             logger.warn("Converting part to mimetype %s failed.", mimetype)
             return u'', 'text/plain'
