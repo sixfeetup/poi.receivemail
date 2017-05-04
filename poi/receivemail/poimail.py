@@ -155,16 +155,12 @@ class Receiver(BrowserView):
             for name, att in attachments:
                 logger.info("Adding attachment as response: %r, length %d",
                             name, len(att))
-                attachment = NamedBlobFile(att, 'text/plain', name)
-                try:
-                    self.add_response(issue, text='', mimetype='text/plain',
-                                      attachment=attachment)
-                except Unauthorized, exc:
-                    # We mark this as unauthorized, but the main issue
-                    # or response is already created, which is
-                    # actually fine.
-                    logger.error(u'Unauthorized to add response: %s', exc)
-                    return u'Unauthorized'
+                attachment = NamedBlobFile(att, '', name)
+                api.content.create(
+                        container=issue,
+                        title=name,
+                        type='File',
+                        file=attachment)
 
         # Restore original security manager
         setSecurityManager(sm)
