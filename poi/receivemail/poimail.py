@@ -16,7 +16,7 @@ from AccessControl import Unauthorized
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
 from AccessControl.SecurityManagement import newSecurityManager
-from AccessControl.User import UnrestrictedUser
+from AccessControl.User import Super as UnrestrictedUser
 from plone import api
 from plone.app.textfield import RichTextValue
 from plone.namedfile import NamedBlobFile
