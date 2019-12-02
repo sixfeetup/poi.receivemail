@@ -58,7 +58,7 @@ class Receiver(BrowserView):
         mail = self.request.get('Mail')
         mail = mail.strip()
         if not mail:
-            msg = u'No mail found in request'
+            msg = 'No mail found in request'
             logger.warn(msg)
             return msg
         message = message_from_string(mail)
@@ -70,7 +70,7 @@ class Receiver(BrowserView):
         from_addresses = self.get_addresses(message, 'From')
         to_addresses = self.get_addresses(message, 'To')
         if not from_addresses or not to_addresses:
-            msg = u'No From or To address found in request'
+            msg = 'No From or To address found in request'
             logger.warn(msg)
             return msg
         # Pick the first one; strange anyway if there would be more.
@@ -81,7 +81,7 @@ class Receiver(BrowserView):
             # This too easily means that a message sent by Poi ends up
             # being added as a reply on an issue that we have just
             # created.
-            msg = u'Ignoring mail from portal email_from_address'
+            msg = 'Ignoring mail from portal email_from_address'
             logger.info(msg)
             return msg
 
@@ -92,7 +92,7 @@ class Receiver(BrowserView):
             if charset:
                 decoded_string = decoded_string.decode(charset)
             subjects.append(decoded_string)
-        subject = u' '.join(subjects)
+        subject = ' '.join(subjects)
 
         logger.debug("Tracker at %s received mail from %r to %r with "
                      "subject %r", self.context.absolute_url(),
@@ -107,7 +107,7 @@ class Receiver(BrowserView):
         # Create an attachment from the complete email.  Somehow the
         # result is nicer when it is put in a response than in an
         # issue.  Not much we can do about that probably.
-        attachment = NamedBlobFile(mail, mimetype, u'email.eml')
+        attachment = NamedBlobFile(mail, mimetype, 'email.eml')
 
         tags = self.get_tags(message)
         if tags:
@@ -136,17 +136,17 @@ class Receiver(BrowserView):
                     title=subject, details=details, contact_email=from_address,
                     attachment=attachment, assignee=manager,
                     subject=tags)
-            except Unauthorized, exc:
-                logger.error(u'Unauthorized to create issue: %s', exc)
-                return u'Unauthorized'
+            except Unauthorized as exc:
+                logger.error('Unauthorized to create issue: %s', exc)
+                return 'Unauthorized'
             logger.info('Created issue from email at %s', issue.absolute_url())
         else:
             try:
                 self.add_response(issue, text=details, mimetype=mimetype,
                                   attachment=attachment)
-            except Unauthorized, exc:
-                logger.error(u'Unauthorized to add response: %s', exc)
-                return u'Unauthorized'
+            except Unauthorized as exc:
+                logger.error('Unauthorized to add response: %s', exc)
+                return 'Unauthorized'
             logger.info('Added mail as response to issue %s',
                         issue.absolute_url())
 
@@ -415,11 +415,7 @@ class Receiver(BrowserView):
             charset = message.get_content_charset()
             logger.info("Charset: %r", charset)
             if charset and charset != 'utf-8':
-                # We only want to store unicode or ascii or utf-8 in
-                # Plone.
-                # Decode to unicode:
-                payload = payload.decode(charset, 'replace')
-                # Encode to utf-8:
+                # We only want to store unicode or ascii or utf-8 in Plone.
                 payload = payload.encode('utf-8', 'replace')
             return payload, mimetype
         for part in payload:
@@ -446,9 +442,9 @@ class Receiver(BrowserView):
             # only need that safe mimetype for the conversion.
             mimetype = 'text/html'
         else:
-            filename = unicode(part.get_filename())
+            filename = part.get_filename()
             if filename:
-                return u'', 'text/plain'
+                return '', 'text/plain'
             else:
                 # This might not work in all cases, e.g. for attachments,
                 # but that is not tested yet.
@@ -456,7 +452,7 @@ class Receiver(BrowserView):
                 safe = tt.convertTo(mimetype, part.get_payload())
         if safe is None:
             logger.warn("Converting part to mimetype %s failed.", mimetype)
-            return u'', 'text/plain'
+            return '', 'text/plain'
         return safe.getData(), mimetype
 
     def get_attachments(self, message):
@@ -467,7 +463,7 @@ class Receiver(BrowserView):
             mimetype = message.get_content_type()
             if mimetype.startswith('text'):
                 return []
-            filename = unicode(message.get_filename())
+            filename = message.get_filename()
             if not filename:
                 return []
             encoding = message.get('Content-Transfer-Encoding', '')
@@ -496,8 +492,7 @@ class Receiver(BrowserView):
             issue_defaults = ISettings(tracker)
             # filter out the values that are None so we don't override real
             # fields
-            issue_defaults = dict([(k, v) for k, v in issue_defaults.items()
-                                   if v])
+            issue_defaults = {k: v for k, v in issue_defaults.items() if v}
             # add our default values into the arguments
             kwargs.update(issue_defaults)
         # Some fields are required.  We pick the first available
