@@ -1,6 +1,6 @@
 import base64
 import logging
-from email.Errors import HeaderParseError
+from email.errors import HeaderParseError
 from email import message_from_string
 try:
     from email import utils as email_utils
@@ -8,7 +8,7 @@ try:
 except ImportError:
     # BBB Python 2.4
     from email import Utils as email_utils
-from email import Header
+from email.header import Header
 
 from zope.interface import alsoProvides
 
